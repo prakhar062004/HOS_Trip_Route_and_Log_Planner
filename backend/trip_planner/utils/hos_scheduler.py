@@ -12,7 +12,7 @@ class HOSScheduler:
         self.duty_since_last_rest = 0.0
         self.driving_since_last_break = 0.0
         self.rolling_70_hour_clock = current_cycle_used
-        self.miles_since_fueling = 0.0
+        self.km_since_fueling = 0.0
         
         # Raw event log of the entire trip
         self.events = []
@@ -52,7 +52,7 @@ class HOSScheduler:
             # 30-minute break
             self.driving_since_last_break = 0.0
 
-    def plan_activity(self, activity_type: str, total_hours: float, location: str, description: str, speed_mph: float = 55.0):
+    def plan_activity(self, activity_type: str, total_hours: float, location: str, description: str, speed_kmh: float = 50.0):
         """
         Schedules a driving or on-duty activity. Breaks it down and automatically inserts HOS rests.
         """
@@ -89,8 +89,8 @@ class HOSScheduler:
 
             # Check if we need a fueling stop during this driving block
             if activity_type == "DRIVING":
-                miles_to_fuel = 1000.0 - self.miles_since_fueling
-                hours_to_fuel = miles_to_fuel / speed_mph
+                km_to_fuel = 1500.0 - self.km_since_fueling
+                hours_to_fuel = km_to_fuel / speed_kmh
                 if hours_to_fuel < allowed:
                     # Drive up to the fueling point
                     allowed = hours_to_fuel
@@ -108,7 +108,7 @@ class HOSScheduler:
             if activity_type == "DRIVING":
                 self.driving_since_last_rest += allowed
                 self.driving_since_last_break += allowed
-                self.miles_since_fueling += allowed * speed_mph
+                self.km_since_fueling += allowed * speed_kmh
             
             self.duty_since_last_rest += allowed
             self.rolling_70_hour_clock += allowed
@@ -119,7 +119,8 @@ class HOSScheduler:
                 self.add_event("ON_DUTY", 0.5, location, "Fueling Vehicle")
                 self.duty_since_last_rest += 0.5
                 self.rolling_70_hour_clock += 0.5
-                self.miles_since_fueling = 0.0
+                self.km_since_fueling = 0.0
+
 
 def generate_daily_logs(events, start_date_str: str, current_cycle_used: float, carrier_info: dict) -> list:
     """

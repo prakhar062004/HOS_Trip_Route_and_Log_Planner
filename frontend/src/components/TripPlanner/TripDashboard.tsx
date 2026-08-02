@@ -90,13 +90,16 @@ export const TripDashboard: React.FC = () => {
     <div className="w-full max-w-6xl mx-auto py-6 px-4 flex flex-col gap-6">
       {/* Page Header */}
       <header className="no-print flex flex-col sm:flex-row items-start sm:items-center justify-between border-b border-slate-200 pb-4 gap-4">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight text-slate-900">
-            HOS Trip Route & Log Planner
-          </h1>
-          <p className="text-xs text-slate-500 mt-1">
-            Calculate routes, automate mandatory rest breaks, and generate pixel-perfect FMCSA daily driver logs.
-          </p>
+        <div className="flex items-center gap-3">
+          <img src="/logo.svg" className="w-10 h-10 drop-shadow-sm" alt="Indian HOS Planner Logo" />
+          <div>
+            <h1 className="text-xl font-bold tracking-tight text-slate-900 flex items-center gap-2">
+              Indian Route &amp; Log Planner
+            </h1>
+            <p className="text-[11px] text-slate-500 mt-0.5 font-medium">
+              Calculate routes across India, schedule mandatory rest stops, and generate compliant daily driver logs.
+            </p>
+          </div>
         </div>
 
         {/* Tab Controls */}
@@ -152,7 +155,7 @@ export const TripDashboard: React.FC = () => {
                   <div>
                     <div className="text-[10px] text-slate-400 uppercase font-black">Distance</div>
                     <div className="text-xl font-bold mt-1 font-mono-grid text-white">
-                      {tripData.total_distance_miles} <span className="text-xs font-normal">mi</span>
+                      {tripData.total_distance_miles} <span className="text-xs font-normal">km</span>
                     </div>
                   </div>
                   <div>

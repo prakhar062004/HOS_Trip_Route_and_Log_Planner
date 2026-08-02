@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100%" height="100%">
+  <defs>
+    <!-- Indian Tricolor Gradients -->
+    <linearGradient id="saffron-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FF9933" />
+      <stop offset="100%" stop-color="#FF6600" />
+    </linearGradient>
+    <linearGradient id="green-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#128807" />
+      <stop offset="100%" stop-color="#0F6F05" />
+    </linearGradient>
+    <linearGradient id="blue-grad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#000088" />
+      <stop offset="100%" stop-color="#000044" />
+    </linearGradient>
+  </defs>
+
+  <!-- Stylized Road/Globe grid background -->
+  <circle cx="50" cy="50" r="45" fill="none" stroke="#f1f5f9" stroke-width="4" />
+  
+  <!-- Indian National Highway symbol (Stylized road merging to horizon) -->
+  <path d="M 30,80 L 45,35 L 55,35 L 70,80 Z" fill="url(#green-grad)" opacity="0.9" />
+  <path d="M 49,80 L 49.5,35 L 50.5,35 L 51,80 Z" fill="#ffffff" />
+  
+  <!-- Sleek Map Pin overlay representing Route coordinates -->
+  <path d="M 50,15 C 38,15 30,23 30,35 C 30,50 50,75 50,75 C 50,75 70,50 70,35 C 70,23 62,15 50,15 Z" 
+        fill="url(#saffron-grad)" 
+        stroke="#ffffff" 
+        stroke-width="2.5" 
+        filter="drop-shadow(0px 3px 4px rgba(0,0,0,0.15))" />
+
+  <!-- Inner wheel/Ashoka Chakra detail representing rotation, movement and logs -->
+  <circle cx="50" cy="35" r="8" fill="#ffffff" />
+  <circle cx="50" cy="35" r="6" fill="none" stroke="url(#blue-grad)" stroke-width="1.5" />
+  <circle cx="50" cy="35" r="2" fill="url(#blue-grad)" />
+</svg>
