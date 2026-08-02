@@ -1,9 +1,15 @@
-import { TripDashboard } from './components/TripPlanner/TripDashboard';
+import { Navbar } from './components/SaaS/Navbar';
+import { Hero } from './components/SaaS/Hero';
+import { Dashboard } from './components/SaaS/Dashboard';
+import { Footer } from './components/SaaS/Footer';
 
 function App() {
   return (
-    <div className="w-full min-h-screen bg-slate-100 print:bg-white text-slate-800">
-      <TripDashboard />
+    <div className="w-full min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-200 transition-colors duration-300 flex flex-col">
+      <Navbar />
+      <Hero />
+      <Dashboard />
+      <Footer />
     </div>
   );
 }

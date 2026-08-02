@@ -81,11 +81,13 @@ const getInitialData = (): DriverLogData => {
 interface DriverDailyLogProps {
   controlledLogData?: DriverLogData;
   onControlledLogDataChange?: (updatedData: DriverLogData) => void;
+  isEmbedded?: boolean;
 }
 
 export const DriverDailyLog: React.FC<DriverDailyLogProps> = ({
   controlledLogData,
   onControlledLogDataChange,
+  isEmbedded = false,
 }) => {
   const [data, setData] = useState<DriverLogData>(controlledLogData || getInitialData());
   const [activeBrushStatus, setActiveBrushStatus] = useState<DutyStatus>('DRIVING');
@@ -125,7 +127,6 @@ export const DriverDailyLog: React.FC<DriverDailyLogProps> = ({
       return merged;
     });
   };
-
 
   // Reset log back to default sample
   const handleResetLog = () => {
@@ -169,8 +170,69 @@ export const DriverDailyLog: React.FC<DriverDailyLogProps> = ({
     window.print();
   };
 
+  // Core printable document layout
+  const paperContent = (
+    <main className="print-page w-full max-w-5xl mx-auto bg-white border border-slate-300 shadow-xl print:shadow-none print:border-none p-4 md:p-8 rounded-lg print:rounded-none flex flex-col gap-0 select-text text-slate-800">
+      
+      {/* Header Field Inputs */}
+      <Header data={data} onChange={handleDataChange} />
+
+      {/* 24-Hour Grid & Canvas Drawing Area */}
+      <LogGrid
+        intervals={data.intervals}
+        onChange={(newIntervals) => handleDataChange({ intervals: newIntervals })}
+        activeStatus={activeBrushStatus}
+        setActiveStatus={setActiveBrushStatus}
+      />
+
+      {/* Remarks Section */}
+      <Remarks data={data} onChange={handleDataChange} />
+
+      {/* Bottom HOS Recap Panel */}
+      <Recap data={data} onChange={handleDataChange} />
+
+      {/* Signatures & Certification block */}
+      <div className="w-full border-x-2 border-b-2 border-slate-900 bg-white p-4 text-xs font-semibold text-slate-800 flex flex-col md:flex-row justify-between gap-6">
+        <div className="flex-1 flex flex-col justify-end text-[10px] leading-relaxed text-slate-500 font-medium">
+          <p className="uppercase font-bold text-slate-700 mb-1">Driver Certification</p>
+          <p>I hereby certify that these entries are true and correct and that I have recorded my duties in compliance with the Federal Motor Carrier Safety Regulations (FMCSR) part 395.</p>
+        </div>
+        
+        <div className="flex flex-wrap gap-4 justify-between md:justify-end items-end">
+          {/* Signature Line */}
+          <div className="flex flex-col w-56">
+            <div className="h-10 flex items-end justify-center pb-1 relative border-b border-slate-400">
+              {data.driverSignatureName && (
+                <span className="font-signature text-2xl text-blue-800 select-none pb-1 animate-fade-in absolute">
+                  {data.driverSignatureName}
+                </span>
+              )}
+            </div>
+            <span className="text-[9px] text-slate-500 uppercase mt-1 font-bold">
+              Driver's Signature (Signed)
+            </span>
+          </div>
+
+          {/* Date line */}
+          <div className="flex flex-col w-32">
+            <div className="h-10 flex items-end justify-center pb-1 font-mono text-sm border-b border-slate-400 text-slate-800">
+              {data.driverSignatureDate}
+            </div>
+            <span className="text-[9px] text-slate-500 uppercase mt-1 font-bold">
+              Date Signed
+            </span>
+          </div>
+        </div>
+      </div>
+    </main>
+  );
+
+  if (isEmbedded) {
+    return paperContent;
+  }
+
   return (
-    <div className="min-h-screen bg-slate-100 py-6 px-4 sm:px-6 md:py-10 no-print-bg">
+    <div className="min-h-screen bg-slate-100 py-6 px-4 sm:px-6 md:py-10 no-print-bg text-slate-800">
       
       {/* Interactive Admin Tool Belt */}
       <div className="no-print max-w-5xl mx-auto mb-6 bg-white border border-slate-200 rounded-xl p-4 shadow-sm flex flex-col md:flex-row items-center justify-between gap-4">
@@ -216,59 +278,7 @@ export const DriverDailyLog: React.FC<DriverDailyLogProps> = ({
       </div>
 
       {/* Main Paper Sheet Representation */}
-      <main className="print-page max-w-5xl mx-auto bg-white border border-slate-300 shadow-xl print:shadow-none print:border-none p-4 md:p-8 rounded-lg print:rounded-none flex flex-col gap-0 select-text">
-        
-        {/* Header Field Inputs */}
-        <Header data={data} onChange={handleDataChange} />
-
-        {/* 24-Hour Grid & Canvas Drawing Area */}
-        <LogGrid
-          intervals={data.intervals}
-          onChange={(newIntervals) => handleDataChange({ intervals: newIntervals })}
-          activeStatus={activeBrushStatus}
-          setActiveStatus={setActiveBrushStatus}
-        />
-
-        {/* Remarks Section */}
-        <Remarks data={data} onChange={handleDataChange} />
-
-        {/* Bottom HOS Recap Panel */}
-        <Recap data={data} onChange={handleDataChange} />
-
-        {/* Signatures & Certification block */}
-        <div className="w-full border-x-2 border-b-2 border-slate-900 bg-white p-4 text-xs font-semibold text-slate-800 flex flex-col md:flex-row justify-between gap-6">
-          <div className="flex-1 flex flex-col justify-end text-[10px] leading-relaxed text-slate-500 font-medium">
-            <p className="uppercase font-bold text-slate-700 mb-1">Driver Certification</p>
-            <p>I hereby certify that these entries are true and correct and that I have recorded my duties in compliance with the Federal Motor Carrier Safety Regulations (FMCSR) part 395.</p>
-          </div>
-          
-          <div className="flex flex-wrap gap-4 justify-between md:justify-end items-end">
-            {/* Signature Line */}
-            <div className="flex flex-col w-56">
-              <div className="h-10 flex items-end justify-center pb-1 relative border-b border-slate-400">
-                {data.driverSignatureName && (
-                  <span className="font-signature text-2xl text-blue-800 select-none pb-1 animate-fade-in absolute">
-                    {data.driverSignatureName}
-                  </span>
-                )}
-              </div>
-              <span className="text-[9px] text-slate-500 uppercase mt-1 font-bold">
-                Driver's Signature (Signed)
-              </span>
-            </div>
-
-            {/* Date line */}
-            <div className="flex flex-col w-32">
-              <div className="h-10 flex items-end justify-center pb-1 font-mono text-sm border-b border-slate-400 text-slate-800">
-                {data.driverSignatureDate}
-              </div>
-              <span className="text-[9px] text-slate-500 uppercase mt-1 font-bold">
-                Date Signed
-              </span>
-            </div>
-          </div>
-        </div>
-      </main>
+      {paperContent}
 
       {/* Helpful Instructions footer (no-print) */}
       <footer className="no-print max-w-5xl mx-auto mt-6 text-center text-[10px] text-slate-400 font-medium flex items-center justify-center gap-1">
@@ -279,4 +289,5 @@ export const DriverDailyLog: React.FC<DriverDailyLogProps> = ({
     </div>
   );
 };
+
 export default DriverDailyLog;
