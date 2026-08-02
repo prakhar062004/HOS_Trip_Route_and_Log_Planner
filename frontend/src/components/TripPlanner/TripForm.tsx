@@ -10,7 +10,7 @@ interface LocationInputProps {
   required?: boolean;
 }
 
-// Custom autocomplete input component for geocoding Indian locations
+// Custom autocomplete input component for geocoding global locations
 const LocationInput: React.FC<LocationInputProps> = ({
   label,
   name,
@@ -31,7 +31,6 @@ const LocationInput: React.FC<LocationInputProps> = ({
       return;
     }
 
-
     const timer = setTimeout(async () => {
       setLoading(true);
       try {
@@ -48,7 +47,7 @@ const LocationInput: React.FC<LocationInputProps> = ({
     }, 450); // 450ms debounce window
 
     return () => clearTimeout(timer);
-  }, [value]);
+  }, [value, showDropdown]);
 
   // Click outside listener to dismiss suggestions dropdown
   useEffect(() => {
@@ -111,24 +110,24 @@ interface TripFormProps {
 export const TripForm: React.FC<TripFormProps> = ({ onSubmit, isLoading }) => {
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [formData, setFormData] = useState({
-    current_location: 'Mumbai, Maharashtra, India',
-    pickup_location: 'Pune, Maharashtra, India',
-    dropoff_location: 'Bengaluru, Karnataka, India',
+    current_location: 'Chicago, IL',
+    pickup_location: 'Detroit, MI',
+    dropoff_location: 'Dallas, TX',
     cycle_hours: '45.0',
     start_date: new Date().toISOString().split('T')[0],
     
-    // Indian road transport defaults
-    carrierName: 'Indian Roadlines Logistics Ltd.',
-    mainOfficeAddress: 'Plot 42, Sector 10, Kalamboli, Navi Mumbai, MH 410218',
-    homeTerminalAddress: 'Navi Mumbai Hub, Kalamboli, MH',
-    truckTractorNumber: 'NL-01-A-4832', // National permit truck
-    trailerNumber: 'MH-43-XY-9081',
-    licensePlate: 'MH-43-XY-9081',
+    // US transport defaults
+    carrierName: 'Interstate Freight Logistics',
+    mainOfficeAddress: '500 Logistics Parkway, Chicago, IL 60611',
+    homeTerminalAddress: 'Chicago Terminal #12, Chicago, IL',
+    truckTractorNumber: 'TRK-905',
+    trailerNumber: 'TRL-402',
+    licensePlate: 'IL 948-2831',
     odometerStart: '124500',
-    shipper: 'Tata Steel Ltd.',
-    commodity: 'Industrial Castings & Plates',
-    driverName: 'Rajesh Kumar',
-    shippingDocs: 'E-Way Bill #84920831', // Standard Indian GST Shipping Doc
+    shipper: 'Midwest Distribution Co.',
+    commodity: 'Auto Parts & Assemblies',
+    driverName: 'Alexander J. Mercer',
+    shippingDocs: 'B/L 849201-X',
   });
 
   const handleLocationChange = (name: string, val: string) => {
@@ -152,24 +151,24 @@ export const TripForm: React.FC<TripFormProps> = ({ onSubmit, isLoading }) => {
       dropoff_location: '',
       cycle_hours: '0.0',
       start_date: new Date().toISOString().split('T')[0],
-      carrierName: 'Indian Roadlines Logistics Ltd.',
-      mainOfficeAddress: 'Plot 42, Sector 10, Kalamboli, Navi Mumbai, MH 410218',
-      homeTerminalAddress: 'Navi Mumbai Hub, Kalamboli, MH',
-      truckTractorNumber: 'NL-01-A-4832',
-      trailerNumber: 'MH-43-XY-9081',
-      licensePlate: 'MH-43-XY-9081',
+      carrierName: 'Interstate Freight Logistics',
+      mainOfficeAddress: '500 Logistics Parkway, Chicago, IL 60611',
+      homeTerminalAddress: 'Chicago Terminal #12, Chicago, IL',
+      truckTractorNumber: 'TRK-905',
+      trailerNumber: 'TRL-402',
+      licensePlate: 'IL 948-2831',
       odometerStart: '124500',
-      shipper: 'Tata Steel Ltd.',
-      commodity: 'Industrial Castings & Plates',
-      driverName: 'Rajesh Kumar',
-      shippingDocs: 'E-Way Bill #84920831',
+      shipper: 'Midwest Distribution Co.',
+      commodity: 'Auto Parts & Assemblies',
+      driverName: 'Alexander J Mercer',
+      shippingDocs: 'B/L 849201-X',
     });
   };
 
   return (
     <form onSubmit={handleSubmit} className="w-full bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
       <h2 className="text-sm font-bold uppercase tracking-wider text-slate-800 border-b border-slate-100 pb-2 mb-4">
-        Trip Parameters (India Centric)
+        Trip Parameters
       </h2>
 
       <div className="flex flex-col gap-4">
@@ -180,7 +179,7 @@ export const TripForm: React.FC<TripFormProps> = ({ onSubmit, isLoading }) => {
           value={formData.current_location}
           onChange={handleLocationChange}
           required
-          placeholder="Type to search e.g. Mumbai"
+          placeholder="Type to search e.g. Chicago"
         />
 
         {/* Pickup Location Input */}
@@ -190,7 +189,7 @@ export const TripForm: React.FC<TripFormProps> = ({ onSubmit, isLoading }) => {
           value={formData.pickup_location}
           onChange={handleLocationChange}
           required
-          placeholder="Type to search e.g. Pune"
+          placeholder="Type to search e.g. Detroit"
         />
 
         {/* Dropoff Location Input */}
@@ -200,7 +199,7 @@ export const TripForm: React.FC<TripFormProps> = ({ onSubmit, isLoading }) => {
           value={formData.dropoff_location}
           onChange={handleLocationChange}
           required
-          placeholder="Type to search e.g. Bengaluru"
+          placeholder="Type to search e.g. Dallas"
         />
 
         {/* Cycle Hours & Start Date */}
@@ -291,7 +290,7 @@ export const TripForm: React.FC<TripFormProps> = ({ onSubmit, isLoading }) => {
                   />
                 </div>
                 <div className="flex flex-col gap-1">
-                  <label className="text-[9px] font-bold uppercase text-slate-400">Odometer Start (km)</label>
+                  <label className="text-[9px] font-bold uppercase text-slate-400">Odometer Start (mi)</label>
                   <input
                     type="number"
                     name="odometerStart"
@@ -314,7 +313,7 @@ export const TripForm: React.FC<TripFormProps> = ({ onSubmit, isLoading }) => {
               </div>
 
               <div className="flex flex-col gap-1">
-                <label className="text-[9px] font-bold uppercase text-slate-400">GST Regd. Office Address</label>
+                <label className="text-[9px] font-bold uppercase text-slate-400">Main Office Address</label>
                 <input
                   type="text"
                   name="mainOfficeAddress"
@@ -348,7 +347,7 @@ export const TripForm: React.FC<TripFormProps> = ({ onSubmit, isLoading }) => {
               </div>
 
               <div className="flex flex-col gap-1">
-                <label className="text-[9px] font-bold uppercase text-slate-400">Shipping Document (E-Way Bill / LR No.)</label>
+                <label className="text-[9px] font-bold uppercase text-slate-400">Shipping Document (B/L No.)</label>
                 <input
                   type="text"
                   name="shippingDocs"

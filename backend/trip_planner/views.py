@@ -77,19 +77,19 @@ class PlanTripView(APIView):
 
         # Leg 1: Current to Pickup
         leg1_duration_hrs = route1["duration_seconds"] / 3600.0
-        leg1_dist_km = route1["distance_meters"] / 1000.0
+        leg1_dist_miles = route1["distance_meters"] * 0.000621371
         
-        # Assume an average driving speed of 50 km/h in India
-        scheduler.plan_activity("DRIVING", leg1_duration_hrs, current_loc_name, "Driving to Pickup", speed_kmh=50.0)
+        # Assume an average driving speed of 55 mph
+        scheduler.plan_activity("DRIVING", leg1_duration_hrs, current_loc_name, "Driving to Pickup", speed_mph=55.0)
 
         # Pickup loading (1 hour On Duty)
         scheduler.plan_activity("ON_DUTY", 1.0, pickup_loc_name, "Loading Cargo (Pickup)")
 
         # Leg 2: Pickup to Dropoff
         leg2_duration_hrs = route2["duration_seconds"] / 3600.0
-        leg2_dist_km = route2["distance_meters"] / 1000.0
+        leg2_dist_miles = route2["distance_meters"] * 0.000621371
         
-        scheduler.plan_activity("DRIVING", leg2_duration_hrs, pickup_loc_name, "Driving to Dropoff", speed_kmh=50.0)
+        scheduler.plan_activity("DRIVING", leg2_duration_hrs, pickup_loc_name, "Driving to Dropoff", speed_mph=55.0)
 
         # Dropoff unloading (1 hour On Duty)
         scheduler.plan_activity("ON_DUTY", 1.0, dropoff_loc_name, "Unloading Cargo (Dropoff)")
@@ -134,7 +134,7 @@ class PlanTripView(APIView):
                 })
 
         # Calculate cumulative distances/times
-        total_dist_km = leg1_dist_km + leg2_dist_km
+        total_dist_miles = leg1_dist_miles + leg2_dist_miles
         total_driving_hours = leg1_duration_hrs + leg2_duration_hrs
 
         # Return full payload
@@ -144,7 +144,7 @@ class PlanTripView(APIView):
             "dropoff_coords": dropoff_coords,
             "route_geometry_1": route1["geometry"],
             "route_geometry_2": route2["geometry"],
-            "total_distance_miles": round(total_dist_km, 1), # Kept key name for frontend compatibility
+            "total_distance_miles": round(total_dist_miles, 1),
             "total_driving_hours": round(total_driving_hours, 1),
             "stops": stops,
             "daily_logs": daily_logs
@@ -163,7 +163,6 @@ class SuggestLocationsView(APIView):
         params = {
             "q": query,
             "format": "json",
-            "countrycodes": "in", # Restrict results to India
             "limit": 5
         }
         
@@ -182,4 +181,5 @@ class SuggestLocationsView(APIView):
             return Response(suggestions)
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 

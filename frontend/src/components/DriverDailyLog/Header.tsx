@@ -135,7 +135,7 @@ export const Header: React.FC<HeaderProps> = ({ data, onChange }) => {
               placeholder="0"
               className="border-b border-slate-400 font-mono text-sm py-0.5 focus:outline-none focus:border-slate-900 text-right bg-transparent placeholder-slate-300"
             />
-            <span className="text-[8px] text-slate-500 uppercase mt-0.5 font-bold">Odo Start (km)</span>
+            <span className="text-[8px] text-slate-500 uppercase mt-0.5 font-bold">Odo Start</span>
           </div>
           <div className="flex flex-col">
             <input
@@ -146,7 +146,7 @@ export const Header: React.FC<HeaderProps> = ({ data, onChange }) => {
               placeholder="0"
               className="border-b border-slate-400 font-mono text-sm py-0.5 focus:outline-none focus:border-slate-900 text-right bg-transparent placeholder-slate-300"
             />
-            <span className="text-[8px] text-slate-500 uppercase mt-0.5 font-bold">Odo End (km)</span>
+            <span className="text-[8px] text-slate-500 uppercase mt-0.5 font-bold">Odo End</span>
           </div>
           <div className="flex flex-col">
             <input
@@ -157,7 +157,7 @@ export const Header: React.FC<HeaderProps> = ({ data, onChange }) => {
               placeholder="0"
               className="border-b border-slate-400 font-mono text-sm py-0.5 focus:outline-none focus:border-slate-900 text-right bg-transparent placeholder-slate-300"
             />
-            <span className="text-[8px] text-slate-500 uppercase mt-0.5 font-bold font-bold text-red-600">Total KM</span>
+            <span className="text-[8px] text-slate-500 uppercase mt-0.5 font-bold font-bold text-red-600">Total Miles</span>
           </div>
         </div>
       </div>
