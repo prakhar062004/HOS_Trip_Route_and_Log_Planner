@@ -1,0 +1,58 @@
+@import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap');
+@import "tailwindcss";
+
+
+:root {
+  font-family: 'Inter', sans-serif;
+  color-scheme: light dark;
+}
+
+/* Custom utility layers for v4 */
+@utility font-signature {
+  font-family: 'Dancing Script', cursive;
+}
+
+@utility font-mono-grid {
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* Hide default scrollbars on grid inputs */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type=number] {
+  -moz-appearance: textfield;
+}
+
+/* Print Specific Rules */
+@media print {
+  body {
+    background: white !important;
+    color: black !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  
+  /* Hide non-printable elements */
+  .no-print {
+    display: none !important;
+  }
+
+  /* Force exact layouts for container */
+  .print-page {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+    box-shadow: none !important;
+    background: white !important;
+  }
+  
+  /* Ensure SVG paths render in high quality without rasterization */
+  svg {
+    page-break-inside: avoid;
+  }
+}
