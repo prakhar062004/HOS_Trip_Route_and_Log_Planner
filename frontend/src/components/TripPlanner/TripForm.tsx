@@ -74,7 +74,7 @@ const LocationInput: React.FC<LocationInputProps> = ({
           onFocus={() => setShowDropdown(true)}
           required={required}
           placeholder={placeholder}
-          className="w-full border border-slate-300 rounded-lg pl-8 pr-3 py-2 text-xs focus:outline-none focus:ring-1 focus:ring-slate-900 bg-white"
+          className="w-full border border-slate-300 rounded-lg pl-8 pr-3 py-2 text-xs focus:outline-none focus:ring-1 focus:ring-slate-900 bg-white placeholder-slate-400"
         />
         <MapPin className="w-3.5 h-3.5 text-slate-400 absolute left-2.5" />
         {loading && <Loader2 className="w-3.5 h-3.5 text-slate-500 absolute right-3 animate-spin" />}
@@ -110,24 +110,24 @@ interface TripFormProps {
 export const TripForm: React.FC<TripFormProps> = ({ onSubmit, isLoading }) => {
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [formData, setFormData] = useState({
-    current_location: 'Chicago, IL',
-    pickup_location: 'Detroit, MI',
-    dropoff_location: 'Dallas, TX',
-    cycle_hours: '45.0',
+    current_location: '',
+    pickup_location: '',
+    dropoff_location: '',
+    cycle_hours: '0.0',
     start_date: new Date().toISOString().split('T')[0],
     
-    // US transport defaults
-    carrierName: 'Interstate Freight Logistics',
-    mainOfficeAddress: '500 Logistics Parkway, Chicago, IL 60611',
-    homeTerminalAddress: 'Chicago Terminal #12, Chicago, IL',
-    truckTractorNumber: 'TRK-905',
-    trailerNumber: 'TRL-402',
-    licensePlate: 'IL 948-2831',
-    odometerStart: '124500',
-    shipper: 'Midwest Distribution Co.',
-    commodity: 'Auto Parts & Assemblies',
-    driverName: 'Alexander J. Mercer',
-    shippingDocs: 'B/L 849201-X',
+    // Empty defaults for carrier/truck details
+    carrierName: '',
+    mainOfficeAddress: '',
+    homeTerminalAddress: '',
+    truckTractorNumber: '',
+    trailerNumber: '',
+    licensePlate: '',
+    odometerStart: '',
+    shipper: '',
+    commodity: '',
+    driverName: '',
+    shippingDocs: '',
   });
 
   const handleLocationChange = (name: string, val: string) => {
@@ -151,17 +151,17 @@ export const TripForm: React.FC<TripFormProps> = ({ onSubmit, isLoading }) => {
       dropoff_location: '',
       cycle_hours: '0.0',
       start_date: new Date().toISOString().split('T')[0],
-      carrierName: 'Interstate Freight Logistics',
-      mainOfficeAddress: '500 Logistics Parkway, Chicago, IL 60611',
-      homeTerminalAddress: 'Chicago Terminal #12, Chicago, IL',
-      truckTractorNumber: 'TRK-905',
-      trailerNumber: 'TRL-402',
-      licensePlate: 'IL 948-2831',
-      odometerStart: '124500',
-      shipper: 'Midwest Distribution Co.',
-      commodity: 'Auto Parts & Assemblies',
-      driverName: 'Alexander J Mercer',
-      shippingDocs: 'B/L 849201-X',
+      carrierName: '',
+      mainOfficeAddress: '',
+      homeTerminalAddress: '',
+      truckTractorNumber: '',
+      trailerNumber: '',
+      licensePlate: '',
+      odometerStart: '',
+      shipper: '',
+      commodity: '',
+      driverName: '',
+      shippingDocs: '',
     });
   };
 
@@ -179,7 +179,7 @@ export const TripForm: React.FC<TripFormProps> = ({ onSubmit, isLoading }) => {
           value={formData.current_location}
           onChange={handleLocationChange}
           required
-          placeholder="Type to search e.g. Chicago"
+          placeholder="Enter starting city..."
         />
 
         {/* Pickup Location Input */}
@@ -189,7 +189,7 @@ export const TripForm: React.FC<TripFormProps> = ({ onSubmit, isLoading }) => {
           value={formData.pickup_location}
           onChange={handleLocationChange}
           required
-          placeholder="Type to search e.g. Detroit"
+          placeholder="Enter pickup city..."
         />
 
         {/* Dropoff Location Input */}
@@ -199,7 +199,7 @@ export const TripForm: React.FC<TripFormProps> = ({ onSubmit, isLoading }) => {
           value={formData.dropoff_location}
           onChange={handleLocationChange}
           required
-          placeholder="Type to search e.g. Dallas"
+          placeholder="Enter dropoff destination..."
         />
 
         {/* Cycle Hours & Start Date */}
@@ -251,7 +251,8 @@ export const TripForm: React.FC<TripFormProps> = ({ onSubmit, isLoading }) => {
                   name="driverName"
                   value={formData.driverName}
                   onChange={handleTextChange}
-                  className="w-full border border-slate-300 rounded-lg px-2.5 py-1.5 text-[11px] bg-slate-50 focus:bg-white focus:outline-none"
+                  placeholder="e.g. Rajesh Kumar"
+                  className="w-full border border-slate-300 rounded-lg px-2.5 py-1.5 text-[11px] bg-slate-50 focus:bg-white focus:outline-none placeholder-slate-400"
                 />
               </div>
 
@@ -263,7 +264,8 @@ export const TripForm: React.FC<TripFormProps> = ({ onSubmit, isLoading }) => {
                     name="truckTractorNumber"
                     value={formData.truckTractorNumber}
                     onChange={handleTextChange}
-                    className="w-full border border-slate-300 rounded-lg px-2.5 py-1.5 text-[11px] bg-slate-50 focus:bg-white focus:outline-none"
+                    placeholder="e.g. NL-01-A-4832"
+                    className="w-full border border-slate-300 rounded-lg px-2.5 py-1.5 text-[11px] bg-slate-50 focus:bg-white focus:outline-none placeholder-slate-400"
                   />
                 </div>
                 <div className="flex flex-col gap-1">
@@ -273,7 +275,8 @@ export const TripForm: React.FC<TripFormProps> = ({ onSubmit, isLoading }) => {
                     name="trailerNumber"
                     value={formData.trailerNumber}
                     onChange={handleTextChange}
-                    className="w-full border border-slate-300 rounded-lg px-2.5 py-1.5 text-[11px] bg-slate-50 focus:bg-white focus:outline-none"
+                    placeholder="e.g. MH-43-XY-9081"
+                    className="w-full border border-slate-300 rounded-lg px-2.5 py-1.5 text-[11px] bg-slate-50 focus:bg-white focus:outline-none placeholder-slate-400"
                   />
                 </div>
               </div>
@@ -286,7 +289,8 @@ export const TripForm: React.FC<TripFormProps> = ({ onSubmit, isLoading }) => {
                     name="licensePlate"
                     value={formData.licensePlate}
                     onChange={handleTextChange}
-                    className="w-full border border-slate-300 rounded-lg px-2.5 py-1.5 text-[11px] bg-slate-50 focus:bg-white focus:outline-none"
+                    placeholder="e.g. MH-43-XY-9081"
+                    className="w-full border border-slate-300 rounded-lg px-2.5 py-1.5 text-[11px] bg-slate-50 focus:bg-white focus:outline-none placeholder-slate-400"
                   />
                 </div>
                 <div className="flex flex-col gap-1">
@@ -296,7 +300,8 @@ export const TripForm: React.FC<TripFormProps> = ({ onSubmit, isLoading }) => {
                     name="odometerStart"
                     value={formData.odometerStart}
                     onChange={handleTextChange}
-                    className="w-full border border-slate-300 rounded-lg px-2.5 py-1.5 text-[11px] bg-slate-50 focus:bg-white focus:outline-none text-right font-mono"
+                    placeholder="e.g. 124500"
+                    className="w-full border border-slate-300 rounded-lg px-2.5 py-1.5 text-[11px] bg-slate-50 focus:bg-white focus:outline-none text-right font-mono placeholder-slate-400"
                   />
                 </div>
               </div>
@@ -308,7 +313,8 @@ export const TripForm: React.FC<TripFormProps> = ({ onSubmit, isLoading }) => {
                   name="carrierName"
                   value={formData.carrierName}
                   onChange={handleTextChange}
-                  className="w-full border border-slate-300 rounded-lg px-2.5 py-1.5 text-[11px] bg-slate-50 focus:bg-white focus:outline-none"
+                  placeholder="e.g. Indian Roadlines Logistics Ltd."
+                  className="w-full border border-slate-300 rounded-lg px-2.5 py-1.5 text-[11px] bg-slate-50 focus:bg-white focus:outline-none placeholder-slate-400"
                 />
               </div>
 
@@ -319,7 +325,20 @@ export const TripForm: React.FC<TripFormProps> = ({ onSubmit, isLoading }) => {
                   name="mainOfficeAddress"
                   value={formData.mainOfficeAddress}
                   onChange={handleTextChange}
-                  className="w-full border border-slate-300 rounded-lg px-2.5 py-1.5 text-[11px] bg-slate-50 focus:bg-white focus:outline-none"
+                  placeholder="e.g. Plot 42, Sector 10, Kalamboli, Navi Mumbai, MH"
+                  className="w-full border border-slate-300 rounded-lg px-2.5 py-1.5 text-[11px] bg-slate-50 focus:bg-white focus:outline-none placeholder-slate-400"
+                />
+              </div>
+
+              <div className="flex flex-col gap-1">
+                <label className="text-[9px] font-bold uppercase text-slate-400">Home Terminal Address</label>
+                <input
+                  type="text"
+                  name="homeTerminalAddress"
+                  value={formData.homeTerminalAddress}
+                  onChange={handleTextChange}
+                  placeholder="e.g. Navi Mumbai Hub, Kalamboli, MH"
+                  className="w-full border border-slate-300 rounded-lg px-2.5 py-1.5 text-[11px] bg-slate-50 focus:bg-white focus:outline-none placeholder-slate-400"
                 />
               </div>
 
@@ -331,7 +350,8 @@ export const TripForm: React.FC<TripFormProps> = ({ onSubmit, isLoading }) => {
                     name="shipper"
                     value={formData.shipper}
                     onChange={handleTextChange}
-                    className="w-full border border-slate-300 rounded-lg px-2.5 py-1.5 text-[11px] bg-slate-50 focus:bg-white focus:outline-none"
+                    placeholder="e.g. Tata Steel Ltd."
+                    className="w-full border border-slate-300 rounded-lg px-2.5 py-1.5 text-[11px] bg-slate-50 focus:bg-white focus:outline-none placeholder-slate-400"
                   />
                 </div>
                 <div className="flex flex-col gap-1">
@@ -341,7 +361,8 @@ export const TripForm: React.FC<TripFormProps> = ({ onSubmit, isLoading }) => {
                     name="commodity"
                     value={formData.commodity}
                     onChange={handleTextChange}
-                    className="w-full border border-slate-300 rounded-lg px-2.5 py-1.5 text-[11px] bg-slate-50 focus:bg-white focus:outline-none"
+                    placeholder="e.g. Industrial Castings & Plates"
+                    className="w-full border border-slate-300 rounded-lg px-2.5 py-1.5 text-[11px] bg-slate-50 focus:bg-white focus:outline-none placeholder-slate-400"
                   />
                 </div>
               </div>
@@ -353,7 +374,8 @@ export const TripForm: React.FC<TripFormProps> = ({ onSubmit, isLoading }) => {
                   name="shippingDocs"
                   value={formData.shippingDocs}
                   onChange={handleTextChange}
-                  className="w-full border border-slate-300 rounded-lg px-2.5 py-1.5 text-[11px] bg-slate-50 focus:bg-white focus:outline-none"
+                  placeholder="e.g. E-Way Bill #84920831"
+                  className="w-full border border-slate-300 rounded-lg px-2.5 py-1.5 text-[11px] bg-slate-50 focus:bg-white focus:outline-none placeholder-slate-400"
                 />
               </div>
             </div>

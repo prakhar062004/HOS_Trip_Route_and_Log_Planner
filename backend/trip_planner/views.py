@@ -95,19 +95,25 @@ class PlanTripView(APIView):
         scheduler.plan_activity("ON_DUTY", 1.0, dropoff_loc_name, "Unloading Cargo (Dropoff)")
 
         # 4. Generate Daily Log Sheets
+        odo_start_raw = data.get("odometerStart")
+        try:
+            odo_start = int(odo_start_raw) if odo_start_raw else 124500
+        except ValueError:
+            odo_start = 124500
+
         carrier_info = {
             "fromCity": current_loc_name,
             "toCity": dropoff_loc_name,
-            "carrierName": data.get("carrierName", "Interstate Freight Logistics"),
-            "mainOfficeAddress": data.get("mainOfficeAddress", "500 Logistics Parkway, Chicago, IL 60611"),
-            "homeTerminalAddress": data.get("homeTerminalAddress", "Chicago Terminal #12, Chicago, IL"),
-            "truckTractorNumber": data.get("truckTractorNumber", "TRK-905"),
-            "trailerNumber": data.get("trailerNumber", "TRL-402"),
-            "licensePlate": data.get("licensePlate", "IL 948-2831"),
-            "odometerStart": int(data.get("odometerStart", 124500)),
-            "shipper": data.get("shipper", "Midwest Distribution Co."),
-            "commodity": data.get("commodity", "Industrial Cargo"),
-            "driverName": data.get("driverName", "Alexander J. Mercer")
+            "carrierName": data.get("carrierName") or "Interstate Freight Logistics",
+            "mainOfficeAddress": data.get("mainOfficeAddress") or "500 Logistics Parkway, Chicago, IL 60611",
+            "homeTerminalAddress": data.get("homeTerminalAddress") or "Chicago Terminal #12, Chicago, IL",
+            "truckTractorNumber": data.get("truckTractorNumber") or "TRK-905",
+            "trailerNumber": data.get("trailerNumber") or "TRL-402",
+            "licensePlate": data.get("licensePlate") or "IL 948-2831",
+            "odometerStart": odo_start,
+            "shipper": data.get("shipper") or "Midwest Distribution Co.",
+            "commodity": data.get("commodity") or "Industrial Cargo",
+            "driverName": data.get("driverName") or "Alexander J. Mercer"
         }
         
         daily_logs = generate_daily_logs(
