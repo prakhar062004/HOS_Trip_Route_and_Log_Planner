@@ -162,52 +162,35 @@ class SuggestLocationsView(APIView):
         if not query:
             return Response([])
         
-        # 1. Primary Attempt: Nominatim API (with India bias)
-        url = "https://nominatim.openstreetmap.org/search"
-        accept_lang = request.headers.get("Accept-Language", "en")
-        headers = {
-            "User-Agent": "HOS_Trip_Route_and_Log_Planner/1.0 (prakhargupta062004@gmail.com)"
-        }
-        params = {
-            "q": query,
-            "format": "json",
-            "limit": 5,
-            "accept-language": accept_lang,
-            "addressdetails": 1,  # Request detailed address breakdown
-            "viewbox": "68.1,35.5,97.4,6.7", # Bounding box for India to bias results
-            "bounded": 0  # Bias suggestions, don't restrict strictly
-        }
-        
         suggestions = []
-        nominatim_success = False
+        photon_success = False
         
+        # 1. Primary Attempt: Photon API (by Komoot - blazing fast autocomplete)
         try:
-            response = requests.get(url, params=params, headers=headers, timeout=4)
-            if response.status_code == 200:
-                data = response.json()
-                if isinstance(data, list) and len(data) > 0:
-                    for item in data:
-                        try:
-                            display_name = item.get("display_name")
-                            if not display_name:
-                                continue
-                                
-                            addr = item.get("address", {})
-                            place_name = (
-                                addr.get("city") or 
-                                addr.get("town") or 
-                                addr.get("village") or 
-                                addr.get("municipality") or 
-                                addr.get("suburb") or 
-                                addr.get("neighbourhood") or
-                                addr.get("building") or
-                                addr.get("amenity") or
-                                addr.get("state") or
-                                display_name.split(",")[0]
-                            )
-                            
-                            state = addr.get("state")
-                            country = addr.get("country")
+            photon_url = "https://photon.komoot.io/api/"
+            photon_params = {
+                "q": query,
+                "limit": 5,
+                "lat": 20.5937, # Center of India to bias results
+                "lon": 78.9629
+            }
+            photon_headers = {
+                "User-Agent": "HOS_Trip_Route_and_Log_Planner/1.0 (prakhargupta062004@gmail.com)"
+            }
+            photon_response = requests.get(photon_url, params=photon_params, headers=photon_headers, timeout=2)
+            if photon_response.status_code == 200:
+                photon_data = photon_response.json()
+                features = photon_data.get("features", [])
+                for feat in features:
+                    try:
+                        props = feat.get("properties", {})
+                        geom = feat.get("geometry", {})
+                        coords = geom.get("coordinates", [])
+                        
+                        if len(coords) == 2:
+                            place_name = props.get("name")
+                            state = props.get("state")
+                            country = props.get("country")
                             
                             parts = []
                             if place_name:
@@ -216,51 +199,66 @@ class SuggestLocationsView(APIView):
                                 parts.append(state)
                             if country and country != place_name:
                                 parts.append(country)
-                            
+                                
                             formatted_name = ", ".join(parts)
                             if not formatted_name:
-                                formatted_name = display_name
-                            
-                            lat_val = item.get("lat")
-                            lon_val = item.get("lon")
-                            if lat_val is not None and lon_val is not None:
-                                suggestions.append({
-                                    "display_name": formatted_name,
-                                    "lat": float(lat_val),
-                                    "lon": float(lon_val)
-                                })
-                        except Exception:
-                            pass
-                    if suggestions:
-                        nominatim_success = True
+                                formatted_name = "Unknown Location"
+                                
+                            suggestions.append({
+                                "display_name": formatted_name,
+                                "lat": float(coords[1]), # Photon coordinates are [longitude, latitude]
+                                "lon": float(coords[0])
+                            })
+                    except Exception:
+                        pass
+                if suggestions:
+                    photon_success = True
         except Exception as e:
-            print(f"Nominatim suggestions lookup failed, attempting Photon fallback: {e}")
+            print(f"Photon autocomplete query failed, trying Nominatim fallback: {e}")
             
-        # 2. Fallback Attempt: Photon API (by Komoot - no rate limit cloud blocks)
-        if not nominatim_success:
+        # 2. Fallback Attempt: Nominatim API (with India bias)
+        if not photon_success:
+            url = "https://nominatim.openstreetmap.org/search"
+            accept_lang = request.headers.get("Accept-Language", "en")
+            headers = {
+                "User-Agent": "HOS_Trip_Route_and_Log_Planner/1.0 (prakhargupta062004@gmail.com)"
+            }
+            params = {
+                "q": query,
+                "format": "json",
+                "limit": 5,
+                "accept-language": accept_lang,
+                "addressdetails": 1,
+                "viewbox": "68.1,35.5,97.4,6.7",
+                "bounded": 0
+            }
             try:
-                photon_url = "https://photon.komoot.io/api/"
-                photon_params = {
-                    "q": query,
-                    "limit": 5
-                }
-                photon_headers = {
-                    "User-Agent": "HOS_Trip_Route_and_Log_Planner/1.0 (prakhargupta062004@gmail.com)"
-                }
-                photon_response = requests.get(photon_url, params=photon_params, headers=photon_headers, timeout=4)
-                if photon_response.status_code == 200:
-                    photon_data = photon_response.json()
-                    features = photon_data.get("features", [])
-                    for feat in features:
-                        try:
-                            props = feat.get("properties", {})
-                            geom = feat.get("geometry", {})
-                            coords = geom.get("coordinates", [])
-                            
-                            if len(coords) == 2:
-                                place_name = props.get("name")
-                                state = props.get("state")
-                                country = props.get("country")
+                response = requests.get(url, params=params, headers=headers, timeout=2)
+                if response.status_code == 200:
+                    data = response.json()
+                    if isinstance(data, list):
+                        for item in data:
+                            try:
+                                display_name = item.get("display_name")
+                                if not display_name:
+                                    continue
+                                    
+                                addr = item.get("address", {})
+                                place_name = (
+                                    addr.get("city") or 
+                                    addr.get("town") or 
+                                    addr.get("village") or 
+                                    addr.get("municipality") or 
+                                    addr.get("suburb") or 
+                                    addr.get("neighbourhood") or
+                                    addr.get("building") or
+                                    addr.get("amenity") or
+                                    addr.get("state") or
+                                    display_name.split(",")[0]
+                                )
+                                
+                                state = addr.get("state")
+                                country = addr.get("country")
                                 
                                 parts = []
                                 if place_name:
@@ -269,20 +267,23 @@ class SuggestLocationsView(APIView):
                                     parts.append(state)
                                 if country and country != place_name:
                                     parts.append(country)
-                                    
+                                
                                 formatted_name = ", ".join(parts)
                                 if not formatted_name:
-                                    formatted_name = "Unknown Location"
-                                    
-                                suggestions.append({
-                                    "display_name": formatted_name,
-                                    "lat": float(coords[1]), # Photon coordinates are [longitude, latitude]
-                                    "lon": float(coords[0])
-                                })
-                        except Exception:
-                            pass
+                                    formatted_name = display_name
+                                
+                                lat_val = item.get("lat")
+                                lon_val = item.get("lon")
+                                if lat_val is not None and lon_val is not None:
+                                    suggestions.append({
+                                        "display_name": formatted_name,
+                                        "lat": float(lat_val),
+                                        "lon": float(lon_val)
+                                    })
+                            except Exception:
+                                pass
             except Exception as e:
-                print(f"Photon fallback failed as well: {e}")
+                print(f"Nominatim fallback failed as well: {e}")
                 
         return Response(suggestions)
 

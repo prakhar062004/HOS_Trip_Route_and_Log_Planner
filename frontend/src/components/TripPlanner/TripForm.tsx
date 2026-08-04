@@ -45,7 +45,7 @@ const LocationInput: React.FC<LocationInputProps> = ({
       } finally {
         setLoading(false);
       }
-    }, 450); // 450ms debounce window
+    }, 180); // 180ms debounce window
 
     return () => clearTimeout(timer);
   }, [value, showDropdown]);

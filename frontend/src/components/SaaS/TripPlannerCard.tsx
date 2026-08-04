@@ -59,7 +59,7 @@ const LocationInput: React.FC<LocationInputProps> = ({
       } finally {
         setLoading(false);
       }
-    }, 450);
+    }, 180);
 
     return () => clearTimeout(timer);
   }, [value, showDropdown]);
