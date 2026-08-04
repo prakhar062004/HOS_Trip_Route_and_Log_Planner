@@ -87,7 +87,9 @@ export const PaperViewer: React.FC<PaperViewerProps> = ({
 
   return (
     <div
+      id="logbook-section"
       ref={containerRef}
+      style={{ scrollMarginTop: '105px' }}
       className={`w-full border border-slate-200 dark:border-slate-800/50 bg-slate-50 dark:bg-slate-950/40 rounded-3xl flex flex-col transition-all duration-300 ${
         isFullscreen ? 'fixed inset-0 z-50 rounded-none bg-slate-950 p-6 overflow-hidden' : 'shadow-md shadow-slate-100 dark:shadow-none'
       }`}

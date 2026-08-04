@@ -136,7 +136,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ loadedTripData, onSaveLog 
   };
 
   return (
-    <main id="trip-planner-section" className="w-full max-w-[1360px] mx-auto px-4 py-8 relative">
+    <main id="trip-planner-section" style={{ scrollMarginTop: '100px' }} className="w-full max-w-[1360px] mx-auto px-4 py-8 relative">
       
       {/* Toast Alert success Notification */}
       <AnimatePresence>

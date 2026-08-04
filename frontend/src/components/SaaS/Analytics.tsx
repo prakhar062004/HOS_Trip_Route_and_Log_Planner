@@ -160,6 +160,7 @@ export const Analytics: React.FC<AnalyticsProps> = ({ log, onChange }) => {
       whileHover={{ y: -2 }}
       transition={{ duration: 0.3, ease: 'easeOut' }}
       id="analytics-section"
+      style={{ scrollMarginTop: '105px' }}
       className="w-full border border-slate-200/40 dark:border-slate-800/50 bg-white dark:bg-slate-900 rounded-3xl p-5 md:p-6 shadow-md shadow-slate-100 dark:shadow-none transition-all duration-300"
     >
       {/* Section Header */}
