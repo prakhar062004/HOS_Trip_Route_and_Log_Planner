@@ -166,7 +166,7 @@ class SuggestLocationsView(APIView):
         # Get Accept-Language from client headers to support multi-language auto-suggestions
         accept_lang = request.headers.get("Accept-Language", "en")
         headers = {
-            "User-Agent": "HOSRouteLogPlanner/1.0 (contact: support@hosplanner.local)"
+            "User-Agent": "HOS_Trip_Route_and_Log_Planner/1.0 (prakhargupta062004@gmail.com)"
         }
         params = {
             "q": query,
@@ -185,45 +185,65 @@ class SuggestLocationsView(APIView):
             
             suggestions = []
             for item in data:
-                addr = item.get("address", {})
-                
-                # Extract primary place name
-                place_name = (
-                    addr.get("city") or 
-                    addr.get("town") or 
-                    addr.get("village") or 
-                    addr.get("municipality") or 
-                    addr.get("suburb") or 
-                    addr.get("neighbourhood") or
-                    addr.get("building") or
-                    addr.get("amenity") or
-                    addr.get("state") or  # fallback to state for state searches
-                    item.get("display_name").split(",")[0]
-                )
-                
-                state = addr.get("state")
-                country = addr.get("country")
-                
-                # Build concise display name containing state and country
-                parts = []
-                if place_name:
-                    parts.append(place_name)
-                if state and state != place_name:
-                    parts.append(state)
-                if country and country != place_name:
-                    parts.append(country)
-                
-                formatted_name = ", ".join(parts)
-                if not formatted_name:
-                    formatted_name = item.get("display_name")
-                
-                suggestions.append({
-                    "display_name": formatted_name,
-                    "lat": float(item.get("lat")),
-                    "lon": float(item.get("lon"))
-                })
+                try:
+                    display_name = item.get("display_name")
+                    if not display_name:
+                        continue
+                        
+                    addr = item.get("address", {})
+                    
+                    # Extract primary place name
+                    place_name = (
+                        addr.get("city") or 
+                        addr.get("town") or 
+                        addr.get("village") or 
+                        addr.get("municipality") or 
+                        addr.get("suburb") or 
+                        addr.get("neighbourhood") or
+                        addr.get("building") or
+                        addr.get("amenity") or
+                        addr.get("state") or  # fallback to state for state searches
+                        display_name.split(",")[0]
+                    )
+                    
+                    state = addr.get("state")
+                    country = addr.get("country")
+                    
+                    # Build concise display name containing state and country
+                    parts = []
+                    if place_name:
+                        parts.append(place_name)
+                    if state and state != place_name:
+                        parts.append(state)
+                    if country and country != place_name:
+                        parts.append(country)
+                    
+                    formatted_name = ", ".join(parts)
+                    if not formatted_name:
+                        formatted_name = display_name
+                    
+                    lat_val = item.get("lat")
+                    lon_val = item.get("lon")
+                    if lat_val is not None and lon_val is not None:
+                        suggestions.append({
+                            "display_name": formatted_name,
+                            "lat": float(lat_val),
+                            "lon": float(lon_val)
+                        })
+                except Exception as inner_e:
+                    # Graceful fallback: use raw item details if parsing failed
+                    try:
+                        suggestions.append({
+                            "display_name": item.get("display_name", "Unknown Location"),
+                            "lat": float(item.get("lat", 0)),
+                            "lon": float(item.get("lon", 0))
+                        })
+                    except:
+                        pass
             return Response(suggestions)
         except Exception as e:
-            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            # Always return a 200 response containing empty suggestions list if API is down, preserving frontend stability
+            print(f"Suggestions fetching failed: {e}")
+            return Response([])
 
 

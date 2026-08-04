@@ -11,8 +11,8 @@ def geocode_location(location_name: str) -> tuple[float, float] | None:
 
   url = "https://nominatim.openstreetmap.org/search"
   headers = {
-    # Nominatim requires a descriptive User-Agent
-    "User-Agent": "HOSRouteLogPlanner/1.0 (contact: support@hosplanner.local)"
+    # Nominatim requires a descriptive User-Agent with a valid contact email
+    "User-Agent": "HOS_Trip_Route_and_Log_Planner/1.0 (prakhargupta062004@gmail.com)"
   }
   params = {
     "q": location_name,
