@@ -40,7 +40,7 @@ const LocationInput: React.FC<LocationInputProps> = ({
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (!showDropdown || !value || value.length < 3) {
+    if (!showDropdown || !value || value.length < 2) {
       setSuggestions([]);
       return;
     }
