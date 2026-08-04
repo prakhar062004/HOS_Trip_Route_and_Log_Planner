@@ -173,7 +173,9 @@ class SuggestLocationsView(APIView):
             "format": "json",
             "limit": 5,
             "accept-language": accept_lang,
-            "addressdetails": 1  # Request detailed address breakdown
+            "addressdetails": 1,  # Request detailed address breakdown
+            "viewbox": "68.1,35.5,97.4,6.7", # Bounding box for India to bias results
+            "bounded": 0  # Bias suggestions, don't restrict strictly
         }
         
         try:
