@@ -172,7 +172,8 @@ class SuggestLocationsView(APIView):
             "q": query,
             "format": "json",
             "limit": 5,
-            "accept-language": accept_lang
+            "accept-language": accept_lang,
+            "addressdetails": 1  # Request detailed address breakdown
         }
         
         try:
@@ -182,8 +183,40 @@ class SuggestLocationsView(APIView):
             
             suggestions = []
             for item in data:
+                addr = item.get("address", {})
+                
+                # Extract primary place name
+                place_name = (
+                    addr.get("city") or 
+                    addr.get("town") or 
+                    addr.get("village") or 
+                    addr.get("municipality") or 
+                    addr.get("suburb") or 
+                    addr.get("neighbourhood") or
+                    addr.get("building") or
+                    addr.get("amenity") or
+                    addr.get("state") or  # fallback to state for state searches
+                    item.get("display_name").split(",")[0]
+                )
+                
+                state = addr.get("state")
+                country = addr.get("country")
+                
+                # Build concise display name containing state and country
+                parts = []
+                if place_name:
+                    parts.append(place_name)
+                if state and state != place_name:
+                    parts.append(state)
+                if country and country != place_name:
+                    parts.append(country)
+                
+                formatted_name = ", ".join(parts)
+                if not formatted_name:
+                    formatted_name = item.get("display_name")
+                
                 suggestions.append({
-                    "display_name": item.get("display_name"),
+                    "display_name": formatted_name,
                     "lat": float(item.get("lat")),
                     "lon": float(item.get("lon"))
                 })
