@@ -5,7 +5,7 @@ A premium, state-of-the-art SaaS logistics command center and Hours of Service (
 ---
 
 ### 🌐 Live Deployment Links
-* **Live Web App (Frontend)**: [https://hos-trip-route-and-log-planner.vercel.app](https://hos-trip-route-and-log-planner.vercel.app) *(or your Vercel URL)*
+* **Live Web App (Frontend)**: [https://hos-trip-route-and-log-planner.vercel.app](https://hos-trip-route-and-log-planner.vercel.app)
 * **Live API Service (Backend)**: [https://hos-trip-route-and-log-planner.onrender.com](https://hos-trip-route-and-log-planner.onrender.com)
 
 ---
