@@ -85,6 +85,7 @@ export const RouteMap: React.FC<RouteMapProps> = ({
       initial={{ opacity: 0, y: 15 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, ease: 'easeOut', delay: 0.1 }}
+      id="route-map-section"
       className="w-full border border-slate-200 dark:border-slate-800/50 bg-white dark:bg-slate-900 rounded-3xl p-4 shadow-md shadow-slate-100 dark:shadow-none transition-colors duration-300"
     >
       <div className="flex items-center gap-2 border-b border-slate-100 dark:border-slate-800/50 pb-3 mb-4">

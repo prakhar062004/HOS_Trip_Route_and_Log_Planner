@@ -366,7 +366,9 @@ export const LogGrid: React.FC<LogGridProps> = ({
           ))}
 
           {/* SVG Rendered Duty Path */}
-          <DutyPath intervals={intervals} width={GRID_WIDTH} rowHeight={ROW_HEIGHT} />
+          <g transform={`translate(${GRID_LEFT}, ${GRID_TOP})`}>
+            <DutyPath intervals={intervals} width={GRID_WIDTH} rowHeight={ROW_HEIGHT} />
+          </g>
 
           {/* Totals Section (Right Column) */}
           <g transform={`translate(${GRID_LEFT + GRID_WIDTH}, 0)`}>

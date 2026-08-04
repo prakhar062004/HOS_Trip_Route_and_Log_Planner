@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, CheckCircle2 } from 'lucide-react';
 import { TripPlannerCard } from './TripPlannerCard';
@@ -34,12 +34,32 @@ interface TripData {
   daily_logs: DriverLogData[];
 }
 
-export const Dashboard: React.FC = () => {
+interface DashboardProps {
+  loadedTripData?: any;
+  onSaveLog?: (tripData: any) => void;
+}
+
+export const Dashboard: React.FC<DashboardProps> = ({ loadedTripData, onSaveLog }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [tripData, setTripData] = useState<TripData | null>(null);
   const [selectedDayIdx, setSelectedDayIdx] = useState(0);
   const [error, setError] = useState<string | null>(null);
   const [showToast, setShowToast] = useState(false);
+
+  useEffect(() => {
+    if (loadedTripData) {
+      // Only reset selectedDayIdx if the loaded data has a different date, route, or distance (meaning it is a brand new loaded log!)
+      const isDifferentRoute = !tripData || 
+        tripData.total_distance_miles !== loadedTripData.total_distance_miles ||
+        tripData.daily_logs[0]?.date !== loadedTripData.daily_logs[0]?.date;
+      
+      setTripData(loadedTripData);
+      
+      if (isDifferentRoute) {
+        setSelectedDayIdx(0);
+      }
+    }
+  }, [loadedTripData]);
 
   const handlePlanTrip = async (formPayload: any) => {
     setIsLoading(true);
@@ -86,9 +106,12 @@ export const Dashboard: React.FC = () => {
         setSelectedDayIdx(0);
         setIsLoading(false);
         setShowToast(true);
+        if (onSaveLog) {
+          onSaveLog(resData);
+        }
         // Dismiss toast after 4s
         setTimeout(() => setShowToast(false), 4000);
-      }, 3500);
+      }, 800);
 
     } catch (err: any) {
       setError(err.message || 'An unexpected error occurred.');
@@ -101,10 +124,14 @@ export const Dashboard: React.FC = () => {
     if (!tripData) return;
     const updatedLogs = [...tripData.daily_logs];
     updatedLogs[selectedDayIdx] = updatedLog;
-    setTripData({
+    const nextData = {
       ...tripData,
       daily_logs: updatedLogs,
-    });
+    };
+    setTripData(nextData);
+    if (onSaveLog) {
+      onSaveLog(nextData);
+    }
   };
 
   return (
@@ -157,10 +184,10 @@ export const Dashboard: React.FC = () => {
         </div>
       ) : !tripData ? (
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-          <div className="lg:col-span-4">
+          <div className="lg:col-span-5">
             <TripPlannerCard onSubmit={handlePlanTrip} isLoading={isLoading} />
           </div>
-          <div className="lg:col-span-8">
+          <div className="lg:col-span-7">
             <EmptyState />
           </div>
         </div>
@@ -193,7 +220,7 @@ export const Dashboard: React.FC = () => {
 
             <Timeline stops={tripData.stops} />
 
-            <Analytics log={tripData.daily_logs[selectedDayIdx]} />
+            <Analytics log={tripData.daily_logs[selectedDayIdx]} onChange={handleLogChange} />
           </div>
 
           {/* Right Column: Generated Log Tabs list & SVG Document Viewer */}

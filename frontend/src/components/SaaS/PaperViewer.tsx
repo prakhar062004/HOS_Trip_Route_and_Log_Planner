@@ -1,6 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { ZoomIn, ZoomOut, RotateCcw, Printer, Maximize2, Minimize2, FileDown } from 'lucide-react';
+import { Printer, Maximize2, Minimize2, FileDown } from 'lucide-react';
 import { DriverDailyLog } from '../DriverDailyLog/DriverDailyLog';
 import type { DriverLogData } from '../DriverDailyLog/types';
 
@@ -15,20 +14,49 @@ export const PaperViewer: React.FC<PaperViewerProps> = ({
   onChange,
   dayIdx
 }) => {
-  const [zoom, setZoom] = useState(0.65);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [containerWidth, setContainerWidth] = useState(1024);
+  const [sheetHeight, setSheetHeight] = useState(860);
+  
   const containerRef = useRef<HTMLDivElement>(null);
+  const resizeRef = useRef<HTMLDivElement>(null);
+  const sheetRef = useRef<HTMLDivElement>(null);
 
-  const handleZoomIn = () => setZoom(z => Math.min(1.4, z + 0.05));
-  const handleZoomOut = () => setZoom(z => Math.max(0.5, z - 0.05));
-  const handleZoomReset = () => setZoom(0.65);
+  // ResizeObserver to track container width dynamically
+  useEffect(() => {
+    if (!resizeRef.current) return;
+    const observer = new ResizeObserver((entries) => {
+      for (let entry of entries) {
+        setContainerWidth(entry.contentRect.width || 1024);
+      }
+    });
+    observer.observe(resizeRef.current);
+    
+    // Initial measurement of the sheet height
+    if (sheetRef.current) {
+      setSheetHeight(sheetRef.current.offsetHeight);
+    }
+
+    return () => observer.disconnect();
+  }, []);
+
+  // Update sheet height when data changes (e.g. remarks list grows/shrinks)
+  useEffect(() => {
+    if (sheetRef.current) {
+      const timer = setTimeout(() => {
+        if (sheetRef.current) {
+          setSheetHeight(sheetRef.current.offsetHeight);
+        }
+      }, 80);
+      return () => clearTimeout(timer);
+    }
+  }, [data]);
 
   const handlePrint = () => {
     window.print();
   };
 
   const handleDownload = () => {
-    // Standard ELD mock download PDF or call window.print
     window.print();
   };
 
@@ -52,11 +80,16 @@ export const PaperViewer: React.FC<PaperViewerProps> = ({
     }
   };
 
+  // Compute the exact zoom factor required to fit the current container width (1024px baseline)
+  const computedZoom = isFullscreen 
+    ? Math.min(1.4, (containerWidth - 48) / 1024) 
+    : Math.min(1, containerWidth / 1024);
+
   return (
     <div
       ref={containerRef}
       className={`w-full border border-slate-200 dark:border-slate-800/50 bg-slate-50 dark:bg-slate-950/40 rounded-3xl flex flex-col transition-all duration-300 ${
-        isFullscreen ? 'fixed inset-0 z-50 rounded-none bg-slate-950 p-6' : 'shadow-md shadow-slate-100 dark:shadow-none'
+        isFullscreen ? 'fixed inset-0 z-50 rounded-none bg-slate-950 p-6 overflow-hidden' : 'shadow-md shadow-slate-100 dark:shadow-none'
       }`}
     >
       {/* Top Toolbar */}
@@ -70,35 +103,9 @@ export const PaperViewer: React.FC<PaperViewerProps> = ({
           <span className="text-xs font-black uppercase text-slate-800 dark:text-white">
             Daily Log Sheet
           </span>
-        </div>
-
-        {/* Center: Zoom Controls */}
-        <div className="flex items-center bg-slate-100 dark:bg-slate-800 rounded-lg p-0.5 border border-slate-200/50 dark:border-slate-700/50">
-          <button
-            onClick={handleZoomOut}
-            className="w-7 h-7 rounded-md flex items-center justify-center text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white transition-colors cursor-pointer"
-            title="Zoom Out"
-          >
-            <ZoomOut className="w-3.5 h-3.5" />
-          </button>
-          <span className="text-[10px] font-bold font-mono px-2 text-slate-600 dark:text-slate-400 min-w-10 text-center">
-            {Math.round(zoom * 100)}%
+          <span className="hidden sm:inline-block px-1.5 py-0.5 text-[8px] font-extrabold uppercase rounded bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400">
+            A4 A-Scale: {Math.round(computedZoom * 100)}%
           </span>
-          <button
-            onClick={handleZoomIn}
-            className="w-7 h-7 rounded-md flex items-center justify-center text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white transition-colors cursor-pointer"
-            title="Zoom In"
-          >
-            <ZoomIn className="w-3.5 h-3.5" />
-          </button>
-          <div className="w-px h-4 bg-slate-200 dark:bg-slate-700 mx-1" />
-          <button
-            onClick={handleZoomReset}
-            className="w-7 h-7 rounded-md flex items-center justify-center text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white transition-colors cursor-pointer"
-            title="Reset Zoom"
-          >
-            <RotateCcw className="w-3.5 h-3.5" />
-          </button>
         </div>
 
         {/* Right: Actions */}
@@ -129,18 +136,34 @@ export const PaperViewer: React.FC<PaperViewerProps> = ({
 
       </div>
 
-      {/* Paper Sheet Container */}
-      <div className="flex-1 overflow-auto flex items-start justify-center p-4 h-[380px] relative">
-        <motion.div
-          style={{ transform: `scale(${zoom})`, transformOrigin: 'top center' }}
-          transition={{ ease: 'easeOut', duration: 0.15 }}
-          className="shadow-2xl shadow-slate-900/10 border border-slate-200 dark:border-transparent bg-white rounded-none no-print transition-shadow w-[1024px] flex-shrink-0"
+      {/* Responsive Paper Sheet Container */}
+      <div 
+        ref={resizeRef} 
+        className={`relative w-full flex transition-all duration-300 ${
+          isFullscreen 
+            ? 'flex-1 overflow-y-auto justify-center p-6 bg-slate-900/50 dark:bg-slate-950/70 rounded-b-3xl' 
+            : 'overflow-hidden bg-white dark:bg-slate-900 rounded-b-3xl justify-start'
+        }`}
+        style={isFullscreen ? { height: 'calc(100vh - 80px)' } : { height: `${sheetHeight * computedZoom}px` }}
+      >
+        <div
+          ref={sheetRef}
+          style={{ 
+            transform: `scale(${computedZoom})`, 
+            transformOrigin: isFullscreen ? 'top center' : 'top left',
+            width: '1024px'
+          }}
+          className={`shadow-2xl bg-white flex-shrink-0 transition-all ${
+            isFullscreen 
+              ? 'relative border border-slate-200 dark:border-slate-800' 
+              : 'absolute left-0 top-0 border-transparent shadow-inner'
+          }`}
         >
           {/* Render our dynamic FMCSA SVG log sheet */}
           <DriverDailyLog controlledLogData={data} onControlledLogDataChange={onChange} isEmbedded={true} />
-        </motion.div>
+        </div>
 
-        {/* Print-only viewport overlay (Leverages browser layout styling to hide toolbar and center paper on print) */}
+        {/* Print-only viewport overlay */}
         <div className="hidden print:block absolute inset-0 bg-white">
           <DriverDailyLog controlledLogData={data} onControlledLogDataChange={onChange} isEmbedded={true} />
         </div>
@@ -149,3 +172,4 @@ export const PaperViewer: React.FC<PaperViewerProps> = ({
     </div>
   );
 };
+export default PaperViewer;
