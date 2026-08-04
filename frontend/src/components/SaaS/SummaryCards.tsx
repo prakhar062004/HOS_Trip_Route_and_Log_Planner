@@ -111,7 +111,7 @@ export const SummaryCards: React.FC<SummaryCardsProps> = ({
           key={idx}
           variants={cardVariants}
           whileHover={{ y: -3, scale: 1.01 }}
-          className="border border-slate-200/50 dark:border-slate-800/50 bg-white dark:bg-slate-900 rounded-2xl p-4 flex flex-col items-start text-left shadow-md shadow-slate-100/40 dark:shadow-none transition-colors duration-300 relative overflow-hidden group"
+          className="border border-slate-200 dark:border-slate-800/50 bg-white dark:bg-slate-900 rounded-2xl p-4 flex flex-col items-start text-left shadow-md shadow-slate-100 dark:shadow-none transition-colors duration-300 relative overflow-hidden group"
         >
           {/* Accent light highlight */}
           <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-blue-500/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />

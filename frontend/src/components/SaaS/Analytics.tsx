@@ -60,7 +60,7 @@ export const Analytics: React.FC<AnalyticsProps> = ({ log }) => {
       initial={{ opacity: 0, y: 15 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, ease: 'easeOut', delay: 0.25 }}
-      className="w-full border border-slate-200/50 dark:border-slate-800/50 bg-white dark:bg-slate-900 rounded-3xl p-5 md:p-6 shadow-lg shadow-slate-100/40 dark:shadow-none transition-colors duration-300"
+      className="w-full border border-slate-200 dark:border-slate-800/50 bg-white dark:bg-slate-900 rounded-3xl p-5 md:p-6 shadow-md shadow-slate-100 dark:shadow-none transition-colors duration-300"
     >
       {/* Section Header */}
       <div className="flex items-center gap-2 border-b border-slate-100 dark:border-slate-800 pb-3 mb-5">

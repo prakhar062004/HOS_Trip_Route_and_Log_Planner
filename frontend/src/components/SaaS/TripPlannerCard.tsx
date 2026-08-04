@@ -161,7 +161,7 @@ export const TripPlannerCard: React.FC<TripPlannerCardProps> = ({ onSubmit, isLo
   };
 
   return (
-    <div className="w-full border border-slate-200/50 dark:border-slate-800/50 bg-white dark:bg-slate-900 rounded-3xl p-5 md:p-6 shadow-lg shadow-slate-100/40 dark:shadow-none transition-colors duration-300">
+    <div className="w-full border border-slate-200 dark:border-slate-800/50 bg-white dark:bg-slate-900 rounded-3xl p-5 md:p-6 shadow-md shadow-slate-100 dark:shadow-none transition-colors duration-300">
       <div className="flex items-center gap-2 border-b border-slate-100 dark:border-slate-800/50 pb-3 mb-5">
         <div className="w-7 h-7 rounded-lg bg-blue-50 dark:bg-blue-950/50 flex items-center justify-center text-blue-600 dark:text-blue-400">
           <ClipboardList className="w-4 h-4" />

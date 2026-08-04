@@ -160,7 +160,7 @@ export const Dashboard: React.FC = () => {
           <div className="lg:col-span-4">
             <TripPlannerCard onSubmit={handlePlanTrip} isLoading={isLoading} />
           </div>
-          <div className="lg:col-span-8 h-full flex flex-col justify-center">
+          <div className="lg:col-span-8">
             <EmptyState />
           </div>
         </div>

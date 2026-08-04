@@ -55,8 +55,8 @@ export const PaperViewer: React.FC<PaperViewerProps> = ({
   return (
     <div
       ref={containerRef}
-      className={`w-full border border-slate-200/50 dark:border-slate-800/50 bg-slate-100/50 dark:bg-slate-950/40 rounded-3xl flex flex-col transition-all duration-300 ${
-        isFullscreen ? 'fixed inset-0 z-50 rounded-none bg-slate-950 p-6' : 'shadow-lg shadow-slate-100/40 dark:shadow-none'
+      className={`w-full border border-slate-200 dark:border-slate-800/50 bg-slate-50 dark:bg-slate-950/40 rounded-3xl flex flex-col transition-all duration-300 ${
+        isFullscreen ? 'fixed inset-0 z-50 rounded-none bg-slate-950 p-6' : 'shadow-md shadow-slate-100 dark:shadow-none'
       }`}
     >
       {/* Top Toolbar */}

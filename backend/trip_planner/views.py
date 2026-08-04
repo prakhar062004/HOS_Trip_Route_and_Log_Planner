@@ -163,13 +163,16 @@ class SuggestLocationsView(APIView):
             return Response([])
         
         url = "https://nominatim.openstreetmap.org/search"
+        # Get Accept-Language from client headers to support multi-language auto-suggestions
+        accept_lang = request.headers.get("Accept-Language", "en")
         headers = {
             "User-Agent": "HOSRouteLogPlanner/1.0 (contact: support@hosplanner.local)"
         }
         params = {
             "q": query,
             "format": "json",
-            "limit": 5
+            "limit": 5,
+            "accept-language": accept_lang
         }
         
         try:
