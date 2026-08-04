@@ -172,7 +172,8 @@ class SuggestLocationsView(APIView):
                 "q": query,
                 "limit": 5,
                 "lat": 20.5937, # Center of India to bias results
-                "lon": 78.9629
+                "lon": 78.9629,
+                "lang": "en" # Force suggestions in English only
             }
             photon_headers = {
                 "User-Agent": "HOS_Trip_Route_and_Log_Planner/1.0 (prakhargupta062004@gmail.com)"
@@ -227,7 +228,7 @@ class SuggestLocationsView(APIView):
                 "q": query,
                 "format": "json",
                 "limit": 5,
-                "accept-language": accept_lang,
+                "accept-language": "en",
                 "addressdetails": 1,
                 "viewbox": "68.1,35.5,97.4,6.7",
                 "bounded": 0
