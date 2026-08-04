@@ -41,7 +41,8 @@ export const TripDashboard: React.FC = () => {
     setIsLoading(true);
     setError(null);
     try {
-      const response = await fetch('http://localhost:8000/api/plan-trip/', {
+      const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+      const response = await fetch(`${API_BASE}/api/plan-trip/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
